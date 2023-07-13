@@ -19,7 +19,6 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
