@@ -4,6 +4,8 @@ import { NgbDropdownModule, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-boo
 import { ToastrModule } from 'ngx-toastr';
 import { GalleryModule, GALLERY_CONFIG, GalleryConfig } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { FileUploadModule } from 'ng2-file-upload';
 
 @NgModule({
   declarations: [],
@@ -16,7 +18,11 @@ import { LightboxModule } from 'ng-gallery/lightbox';
     LightboxModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right'
-    })
+    }),
+    NgxSpinnerModule.forRoot({
+      type: 'timer'
+    }),
+    FileUploadModule
   ],
   exports: [
     NgbModule,
@@ -24,7 +30,9 @@ import { LightboxModule } from 'ng-gallery/lightbox';
     NgbNavModule,
     ToastrModule,
     GalleryModule,
-    LightboxModule
+    LightboxModule,
+    NgxSpinnerModule,
+    FileUploadModule
   ],
   providers: [
     {

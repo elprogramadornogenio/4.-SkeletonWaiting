@@ -3,10 +3,10 @@
     <h1>Your profile</h1>
   </div>
 
-  <div class="col-8" *ngIf="editForm != undefined">
-    <div class="alert alert-info" *ngIf="editForm.dirty">
-      <p><strong>Information: </strong>You have made changes. Any unsave changes will be lost</p>
-    </div>
+  <div class="col-8">
+      <div class="alert alert-info pb-0" *ngIf="editForm != undefined && editForm.dirty">
+        <p><strong>Information: </strong>You have made changes. Any unsave changes will be lost</p>
+      </div>
   </div>
 
   <div class="col-4">
@@ -36,7 +36,7 @@
       </div>
 
       <div class="card-footer">
-        <button type="submit" form="editForm" class="btn btn-success col-12">Save changes</button>
+        <button type="submit" [disabled]="editForm == undefined || !editForm.dirty" form="editForm" class="btn btn-success col-12">Save changes</button>
       </div>
 
     </div>
@@ -74,7 +74,7 @@
       <li [ngbNavItem]="2">
         <button ngbNavLink>Edit Photos</button>
         <ng-template ngbNavContent>
-          <p>Photo edit will go here</p>
+          <app-photo-editor [member]="member"></app-photo-editor>
         </ng-template>
       </li>
     </ul>
