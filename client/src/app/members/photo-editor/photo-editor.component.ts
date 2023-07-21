@@ -71,10 +71,9 @@ export class PhotoEditorComponent implements OnInit {
   }
 
   initializeUploader() {
-    console.log(this.user?.token);
     this.uploader = new FileUploader({
       url: this.baseUrl + 'users/add-photo',
-      authToken: 'Bearer' + this.user?.token,
+      authToken: 'Bearer ' + this.user?.token,
       isHTML5: true,
       allowedFileType: ['image'],
       removeAfterUpload: true,
@@ -82,7 +81,7 @@ export class PhotoEditorComponent implements OnInit {
       maxFileSize: 10*1024*1024
     });
     this.uploader.onAfterAddingFile = (file) => {
-      file.withCredentials = true;
+      file.withCredentials = false;
     }
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {
