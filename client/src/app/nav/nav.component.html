@@ -20,7 +20,7 @@
 
     <div class="dropdown" *ngIf="(currentUser$ | async) as user" ngbDropdown>
       <img src="{{user.photoUrl || './assets/user.jpg'}}" alt="user photo">
-      <a class="dropdown-toggle text-light text-decoration-none ms-1" ngbDropdownToggle>Welcome {{user.username | titlecase}}</a>
+      <a class="dropdown-toggle text-light text-decoration-none ms-1" ngbDropdownToggle>Welcome {{user.knownAs}}</a>
       <div class="dropdown-menu mt-3" ngbDropdownMenu >
          <a class="dropdown-item" routerLink="/member/edit">Edit Profile</a>
          <a class="dropdown-item" (click)="logout()">Logout</a>
