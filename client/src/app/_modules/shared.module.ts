@@ -8,6 +8,8 @@ import { GalleryModule, GALLERY_CONFIG, GalleryConfig } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TimeagoModule } from 'ngx-timeago';
 
 @NgModule({
   declarations: [],
@@ -26,6 +28,8 @@ import { FileUploadModule } from 'ng2-file-upload';
     }),
     BsDatepickerModule.forRoot(),
     PaginationModule.forRoot(),
+    ButtonsModule.forRoot(),
+    TimeagoModule.forRoot(),
     FileUploadModule
   ],
   exports: [
@@ -38,7 +42,9 @@ import { FileUploadModule } from 'ng2-file-upload';
     NgxSpinnerModule,
     BsDatepickerModule,
     PaginationModule,
-    FileUploadModule
+    FileUploadModule,
+    ButtonsModule,
+    TimeagoModule
   ],
   providers: [
     {
