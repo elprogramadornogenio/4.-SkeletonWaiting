@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgbDropdownModule, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ToastrModule } from 'ngx-toastr';
 import { GalleryModule, GALLERY_CONFIG, GalleryConfig } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
@@ -18,6 +19,7 @@ import { TimeagoModule } from 'ngx-timeago';
     NgbModule,
     NgbDropdownModule,
     NgbNavModule,
+    TabsModule.forRoot(),
     GalleryModule,
     LightboxModule,
     ToastrModule.forRoot({
@@ -36,6 +38,7 @@ import { TimeagoModule } from 'ngx-timeago';
     NgbModule,
     NgbDropdownModule,
     NgbNavModule,
+    TabsModule,
     ToastrModule,
     GalleryModule,
     LightboxModule,

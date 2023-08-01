@@ -29,7 +29,7 @@
     <div class="card-footer">
       <div class="btn-button d-flex">
         <button class="btn btn-primary">Like</button>
-        <button class="btn btn-success">Messages</button>
+        <button (click)="selectTab('Messages')" class="btn btn-success">Messages</button>
       </div>
     </div>
     </div>
@@ -37,6 +37,26 @@
   </div>
 
   <div class="col-8">
+    <tabset class="member-tabset" #memberTabs>
+      <tab heading="About {{member.knownAs}}" (selectTab)="onTabActivated($event)" >
+          <h4>Description</h4>
+          <p>{{member.introduction}}</p>
+          <h4>Looking for</h4>
+          <p>{{member.lookingFor}}</p>
+      </tab>
+      <tab heading="Interests" (selectTab)="onTabActivated($event)">
+          <h4>Interests</h4>
+          <p>{{member.interests}}</p>
+      </tab>
+      <tab heading="Photos" (selectTab)="onTabActivated($event)">
+        <gallery thumbPosition="left" fluid [items]="photos"></gallery>
+      </tab>
+      <tab heading="Messages" (selectTab)="onTabActivated($event)" >
+          <app-member-messages [messages]="messages" [username]="member.userName"></app-member-messages>
+      </tab>
+  </tabset>
+
+    <!--
     <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
 
       <li [ngbNavItem]="1">
@@ -67,11 +87,11 @@
       <li [ngbNavItem]="4">
         <button ngbNavLink>Messages</button>
         <ng-template ngbNavContent>
-          <p>Message will go</p>
+          <app-member-messages [username]="member.userName"></app-member-messages>
         </ng-template>
       </li>
 
     </ul>
-    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div> -->
   </div>
 </div>
