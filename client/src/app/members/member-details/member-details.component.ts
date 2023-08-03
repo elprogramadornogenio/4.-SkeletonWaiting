@@ -1,19 +1,22 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Member } from 'src/app/_models/member';
-import { MembersService } from 'src/app/_services/members.service';
 import { ImageItem, GalleryItem, Gallery, ImageSize, ThumbnailsPosition } from 'ng-gallery';
 import { Lightbox } from 'ng-gallery/lightbox';
 import { MessageService } from 'src/app/_services/message.service';
 import { Message } from 'src/app/_models/message';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { PresenceService } from 'src/app/_services/presence.service';
+import { AccountService } from 'src/app/_services/account.service';
+import { User } from 'src/app/_models/user';
+import { take, delay } from 'rxjs';
 
 @Component({
   selector: 'app-member-details',
   templateUrl: './member-details.component.html',
   styleUrls: ['./member-details.component.css']
 })
-export class MemberDetailsComponent implements OnInit, AfterViewInit {
+export class MemberDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('memberTabs')
   memberTabs?: TabsetComponent;
@@ -22,13 +25,26 @@ export class MemberDetailsComponent implements OnInit, AfterViewInit {
   active = 1;
   messages: Message[] = [];
   activeTab?: TabDirective;
+  user?: User;
 
   constructor(
-    private memberService: MembersService,
+    private accountService: AccountService,
     private route: ActivatedRoute,
     public gallery: Gallery,
     public lightbox: Lightbox,
-    private messageService: MessageService) {}
+    private messageService: MessageService,
+    public presenceService: PresenceService,
+    private router: Router) {
+      this.accountService.currentUser$.pipe(take(1)).subscribe({
+        next: user => {
+          if (user) this.user = user;
+        }
+      });
+    }
+
+  ngOnDestroy(): void {
+    this.messageService.stopHubConnection();
+  }
 
 
 
@@ -37,15 +53,20 @@ export class MemberDetailsComponent implements OnInit, AfterViewInit {
       next: data => this.member = data['member']
     });
 
-
-  }
-
-  ngAfterViewInit(): void {
-    this.route.queryParams.subscribe({
+    this.route.queryParams.pipe(delay(10)).subscribe({
       next: params => {
         params['tab'] && this.selectTab(params['tab'])
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    /*
+    this.route.queryParams.subscribe({
+      next: params => {
+        params['tab'] && this.selectTab(params['tab'])
+      }
+    });*/
   }
 
   getImages() {
@@ -71,8 +92,8 @@ export class MemberDetailsComponent implements OnInit, AfterViewInit {
   onTabActivated(data: TabDirective) {
     this.activeTab = data;
 
-    if(this.activeTab.heading === 'Messages') {
-      this.loadMessage();
+    if(this.activeTab.heading === 'Messages' && this.user && this.member?.userName) {
+      this.messageService.createHubConnection(this.user, this.member.userName);
     }
   }
 
@@ -81,6 +102,8 @@ export class MemberDetailsComponent implements OnInit, AfterViewInit {
       this.messageService.getMessageThread(this.member.userName).subscribe({
         next: messages => this.messages = messages
       });
+    } else {
+      this.messageService.stopHubConnection();
     }
   }
 
