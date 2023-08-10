@@ -65,32 +65,41 @@ namespace API.SignalR
             if(username == createMessageDto.RecipientUsername.ToLower())
                 throw new HubException("You cannot send messages to yourself");
             
-            var sender = await unitOfWork.UserRepository.GetUserByUsernameAsync(username);
+            var sender = await unitOfWork.UserRepository
+                .GetUserByUsernameAsync(username); // traer los datos 
+                // del usuario que va a enviar el mensaje
+                // es decir es el emisor del mensaje
 
             var recipient = await unitOfWork.UserRepository
-            .GetUserByUsernameAsync(createMessageDto.RecipientUsername) 
-                ?? throw new HubException("Not found user");
+                .GetUserByUsernameAsync(createMessageDto.RecipientUsername) 
+                ?? throw new HubException("Not found user"); // traer los datos
+                // del usuario que va a recibir el mensaje
+                // es decir el receptor del mensaje
                 
             var message = new Message
             {
-                Sender = sender,
-                Recipient = recipient,
-                SenderUsername = sender.UserName,
-                RecipientUsername = recipient.UserName,
-                Content = createMessageDto.Content
+                Sender = sender, // datos del usuario que envia el mensaje (emisor)
+                Recipient = recipient, // datos del usuario que recibe el mensaje (receptor)
+                SenderUsername = sender.UserName, // usuario (emisor)
+                RecipientUsername = recipient.UserName, // usuario (receptor)
+                Content = createMessageDto.Content // contenido del mensaje
             };
 
             var groupName = GetGroupName(sender.UserName, recipient.UserName);
+            // se encarga de crear un grupo con los nombres de usuario en orden alfabetico
+            // ejemplo lisa-todd pero nunca va a crear un grupo todd-lisa
 
             var group = await unitOfWork.MessageRepository.GetMessageGroup(groupName);
+            // busca si existe el nombre del grupo es decir, si existe por ejemplo lisa-todd
 
             if (group.Connections.Any(x => x.Username == recipient.UserName))
             {
-                message.DateRead = DateTime.UtcNow;
+                message.DateRead = DateTime.UtcNow; // colocar los mensajes leidos
             }
             else 
             {
                 var connections = await PresenceTracker.GetConnectionForUser(recipient.UserName);
+                // traer todas las conexiones del usuario que recibe los mensajes (receptor)
 
                 if(connections != null)
                 {
@@ -100,15 +109,20 @@ namespace API.SignalR
                         username = sender.UserName,
                         knownAs = sender.KnownAs
                     });
+                    // Recibe la variable conexión que contiene todas las conexiones del usuario receptor
+                    // SendAsync: Metodo de SignalR para enviar mediante "NewMessagesReceived" 
+                    // un objeto con los datos username, knownAs
                 }
             }
 
-            unitOfWork.MessageRepository.AddMessage(message);
+            unitOfWork.MessageRepository.AddMessage(message); 
+            // agregar un mensaje en el repositorio
 
             if(await unitOfWork.Complete()) 
             {
                 await Clients.Group(groupName)
-                    .SendAsync("NewMessage", mapper.Map<MessageDto>(message));
+                    .SendAsync("NewMessage", mapper.Map<MessageDto>(message)); // se envia el mensaje 
+                    // al grupo especificado con NewMessage
             }
         }
 
