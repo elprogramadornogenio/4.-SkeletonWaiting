@@ -87,9 +87,7 @@ namespace API.Data
             string currentUserName, 
             string recipientUserName)
         {
-            var messages = await context.Messages
-            .Include(u => u.Sender).ThenInclude(p => p.Photos)
-            .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+            var query = context.Messages
             .Where(m => m.RecipientUsername == currentUserName
                 && m.RecipientDeleted == false
                 && m.SenderUsername == recipientUserName
@@ -97,9 +95,9 @@ namespace API.Data
                 && m.SenderDeleted == false
                 && m.SenderUsername == currentUserName)
             .OrderBy(m => m.MessageSent)
-            .ToListAsync();
+            .AsQueryable();
 
-            var unreadMessages = messages
+            var unreadMessages = query
                 .Where(m => m.DateRead == null && m.RecipientUsername == currentUserName)
                 .ToList();
             
@@ -109,21 +107,14 @@ namespace API.Data
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
-
-                await context.SaveChangesAsync();
             }
-            return mapper.Map<IEnumerable<MessageDto>>(messages);
+            return await query.ProjectTo<MessageDto>(mapper.ConfigurationProvider).ToListAsync();
 
         }
 
         public void RemoveConnection(Connection connection)
         {
             context.Connections.Remove(connection);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await context.SaveChangesAsync() > 0;
         }
     }
 }
