@@ -12,15 +12,20 @@ namespace API.Extensions
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, 
         IConfiguration config)
         {
-
+            // Configura el sistema de autenticación y autorización para trabajar con la clase
+            // AppUser
             services.AddIdentityCore<AppUser>(opt =>
             {
-                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireNonAlphanumeric = false; // el campo establece que la contraseña
+                // no requiere campos no alfanumericos como por ejemplo @, #, !, $
             })
-            .AddRoles<AppRole>()
-            .AddRoleManager<RoleManager<AppRole>>()
-            .AddEntityFrameworkStores<DataContext>();
+            .AddRoles<AppRole>() // agregar la capacidad de utilizar roles de usuario con la clase
+            // AppRole
+            .AddRoleManager<RoleManager<AppRole>>() // agregar un administrador de roles personalizados
+            .AddEntityFrameworkStores<DataContext>(); // Configura el almacenamiento de usuarios
+            // roles utilizando EnityFramework
             
+            // Configuracion de Autenticación con JWT
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters

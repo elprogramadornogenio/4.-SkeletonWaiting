@@ -6,24 +6,34 @@ using API.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args); // se crea una instancia de tipo
+// WebApplicationBuilder para configurar nuestra aplicación con los servicios
 
-// Add services to the container.
+// Agregar los servicios al contenedor de WebApplicationBuilder para construir la
+// aplicación web
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(); // Agregar el servicio para admitir controladores 
+// en la aplicación
+// Los controladores son EndPoints donde se manejan las peticiones HTTP
 
 
-builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddSwaggerAuthenticationServices();
+builder.Services.AddApplicationServices(builder.Configuration); // adicionar servicios
+// de aplicación como ciclos de vida de las instancias de tipo contrato, automappers,
+// repositorios.
+builder.Services.AddSwaggerAuthenticationServices(); // adicionar configuraciones de 
+// autenticacion en Swagger
 builder.Services.AddIdentityServices(builder.Configuration);
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configuracion de Swagger
 
-var app = builder.Build();
+builder.Services.AddEndpointsApiExplorer(); // Agregar los Endpoints de la API (Controlador) 
+builder.Services.AddSwaggerGen(); // Generar todas las funcionalidades de Swagger
 
-app.UseMiddleware<ExceptionMiddleware>();
+var app = builder.Build(); // Crear una instancia de la aplicación web con la configuración
+// de los servicios previamente configurados
+
+app.UseMiddleware<ExceptionMiddleware>();  // Se registra un módulo personalizado de middleware
+// con el fin de manejar los errores de la aplicación
 
 // Configure the HTTP request pipeline.
 app.UseCors(builder => builder
@@ -31,25 +41,35 @@ app.UseCors(builder => builder
     .AllowAnyMethod()
     .AllowCredentials()
     .WithOrigins("http://localhost:4200"));
+// la configuracion de los CORS permite la comunicación con otro servidor desde otro origen en
+// este caso nuestra aplicación esta en dos puertos diferentes
 
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment()) // Si las variables de entorno estan configuradas en desarrollo
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(); // habilitar el middleware de Swagger
+    app.UseSwaggerUI(); // habilitar el middleware de Swagger UI
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); // Redirigir el tráfico HTTP a HTTPS para una comunicación segura
 
-app.UseAuthentication();
+app.UseAuthentication(); 
+// Habilitar las funcionalidades de Autenticación por ejemplo tomar el token en los encabezados
+// de las peticiones HTTP realizar una codificacion y decodificacion, el usuario autenticado
+// correctamente se establece en el contexto de la aplicación
 
 app.UseAuthorization();
+// Habilitar las funcionalidades de Autorizacion por ejemplo verificar si el usuario tiene los
+// permisos para acceder a un recurso, es decir se encarga de habilitar o negar el acceso
+// de los usuarios que se autenticaron.
 
-app.MapControllers();
+app.MapControllers(); // asignar rutas a los controladores para manejar solicitudes
 
-app.MapHub<PresenceHub>("hubs/presence");
+// Funcionalidades de SignalR
 
-app.MapHub<MessageHub>("hubs/message");
+app.MapHub<PresenceHub>("hubs/presence"); // registrar el hub de presence con una ruta especifica 
+
+app.MapHub<MessageHub>("hubs/message"); // registrar el hub message con una ruta especifica
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
@@ -70,4 +90,5 @@ catch (Exception ex)
     
 }
 
-app.Run();
+app.Run(); // Finalimente la aplicación se ejecuta y empieza a escuchar peticiones
+// es decir la aplicacion se pone en funcionamiento.
