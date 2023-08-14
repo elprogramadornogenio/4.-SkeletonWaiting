@@ -22,7 +22,8 @@ builder.Services.AddApplicationServices(builder.Configuration); // adicionar ser
 // repositorios.
 builder.Services.AddSwaggerAuthenticationServices(); // adicionar configuraciones de 
 // autenticacion en Swagger
-builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration); // agregar servicios de 
+// autenticación y autorización
 
 // Configuracion de Swagger
 
@@ -71,22 +72,32 @@ app.MapHub<PresenceHub>("hubs/presence"); // registrar el hub de presence con un
 
 app.MapHub<MessageHub>("hubs/message"); // registrar el hub message con una ruta especifica
 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
+using var scope = app.Services.CreateScope(); // se va a crear un ambito de servicios
+// using es para que el ambito se libere despues de su uso
+var services = scope.ServiceProvider; // una vez que se crea el ambito de servicios se obtiene
+// el proveedor de servicios este es el encargado de proporcionar instancias de servicios
+// en toda la aplicación, estas se utilizan especilmente para permisos de usuarios, administración
+// de usuarios y migraciones de bases de datos.
 
 try
 {
-    var context = services.GetRequiredService<DataContext>();
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var context = services.GetRequiredService<DataContext>(); // se obtiene una instancia
+    // del contexto de la aplicación para interactuar con el Entity Framework
+    var userManager = services.GetRequiredService<UserManager<AppUser>>(); 
+    // Se obtiene una instancia del administrador de usuarios, CRUD para usuarios
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-    await context.Database.MigrateAsync();
-    await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]");
-    await Seed.SeedUsers(userManager, roleManager);
+    // Se obtiene una instancia de roles de usuario, CRUD para roles
+    await context.Database.MigrateAsync(); // aplica migraciones pendientes en la base de datos
+    await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]"); // ejecuta una consulta
+    // sql directamente a la base de datos para eliminar conexiones
+    await Seed.SeedUsers(userManager, roleManager); //
 }
 catch (Exception ex)
 {
-    var logger = services.GetService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during migration");
+    var logger = services.GetService<ILogger<Program>>(); // se crea un logger relacionado con
+    // la clase Program
+    logger.LogError(ex, "An error occurred during migration"); // cuando ocurra un error
+    // en la consola de comandos se dispara el mensaje.
     
 }
 
