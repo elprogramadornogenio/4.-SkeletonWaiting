@@ -34,7 +34,8 @@ var app = builder.Build(); // Crear una instancia de la aplicación web con la c
 // de los servicios previamente configurados
 
 app.UseMiddleware<ExceptionMiddleware>();  // Se registra un módulo personalizado de middleware
-// con el fin de manejar los errores de la aplicación
+// con el fin de manejar los errores de la aplicación se ejecuta la clase ExceptionMiddleware
+// cada vez que se ejecuta una peticion HTTP
 
 // Configure the HTTP request pipeline.
 app.UseCors(builder => builder

@@ -15,7 +15,8 @@ namespace API.Entities
         }
 
         [Key]
-        public string Name { get; set; }
-        public ICollection<Connection> Connections { get; set; } = new List<Connection>();
+        public string Name { get; set; } // nombre de la conexión entre dos usuarios
+        public ICollection<Connection> Connections { get; set; } = new List<Connection>(); 
+        // relacion de un grupo contiene muchos usuarios (relación de uno a muchos)
     }
 }
