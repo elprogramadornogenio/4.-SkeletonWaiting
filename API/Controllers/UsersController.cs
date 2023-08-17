@@ -18,12 +18,11 @@ namespace API.Controllers
         private readonly IphotoService _photoService;
 
         public UsersController(
-            IUnitOfWork unitOfWork, 
-            IMapper mapper, 
-            IphotoService photoService)
+            IUnitOfWork unitOfWork, // inyectar unidad de trabajo
+            IMapper mapper, // inyectar mapper
+            IphotoService photoService) // inyectar servicio de fotos de cloudinary
         {
             this.unitOfWork = unitOfWork;
-
             _mapper = mapper;
             _photoService = photoService;
         }
@@ -35,20 +34,28 @@ namespace API.Controllers
         {
 
             var gender = await unitOfWork.UserRepository
-                .GetUserGender(User.GetUsername());
+                .GetUserGender(User.GetUsername()); // traer el sexo del usuario actual
 
-            userParams.CurrentUsername = User.GetUsername();
+            userParams.CurrentUsername = User.GetUsername(); // en userParams guarda el usuario
+            // actual
 
-            if(string.IsNullOrEmpty(userParams.Gender))
+            if(string.IsNullOrEmpty(userParams.Gender)) // si el sexo está null o vacío
             {
                 userParams.Gender = gender == "male" ? "female": "male";
             }            
 
             var users = await unitOfWork.UserRepository.GetMembersAsync(userParams);
+            // devuelve lista de usuarios PagedList<MemberDto> users con la páginación
+            
+            /*
+                Agrega una respuesta de tipo cabecera AddPaginationHeader y agrega la
+                información de la paginación.
+            */
             Response.AddPaginationHeader(new PaginationHeader(
                 users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages
             ));
-            return Ok(users);
+
+            return Ok(users); // devuelve un status 200 con users
         }
 
         [HttpGet("{username}")]
