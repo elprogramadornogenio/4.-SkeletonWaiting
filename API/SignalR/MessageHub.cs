@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR
 {
-    [Authorize]
+    //[Authorize]
     public class MessageHub: Hub
     {
         private readonly IUnitOfWork unitOfWork;

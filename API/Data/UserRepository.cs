@@ -21,10 +21,25 @@ namespace API.Data
 
         public async Task<MemberDto> GetMemberAsync(string username)
         {
-            return await context.Users
-                .Where(x => x.UserName == username)
-                .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+            return await context.Users // obtener los datos de la tabla users
+                .Where(x => x.UserName == username) // filtrar los datos del usuario
+                .ProjectTo<MemberDto>(mapper.ConfigurationProvider) // transformar los datos
+                // de AppUser a MemberDto
                 .SingleOrDefaultAsync();
+                /*
+                    Como tal SingleOrDefaultAsync funciona de la siguiente manera:
+                    1. Este método se utiliza cuando se pretende devolver un elemento o ninguno
+                    2. Si la consulta Where devuelve un elemento, el método SingleOrDefaultAsync
+                    Lo devolverá.
+                    3. Si la consulta where no devulve elementos, el método SingleOrDefaultAsync
+                    devolverá un null
+                    4. Si la consulta where devuelve más de un elemento, el método
+                    SingleOrDefaultAsync devolverá un error (InvalidOperationException) el objetivo
+                    de esta consulta es buscar elementos que sean únicos.
+                    5. La diferencia entre SingleOrDefaultAsync y FirstOrDefaultAsync es que 
+                    SingleOrDefaultAsync: Exige devolver un elemento si encuentra dos devolverá un error
+                    FirstOrDefaultAsync: Si encuentra dos devolverá el primero de todos.
+                */
         }
 
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
@@ -104,14 +119,25 @@ namespace API.Data
 
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
-            return await context.Users
+            return await context.Users // ingresa a los datos de la tabla Users
                 .Include(p => p.Photos)
+                /*
+                    Utiliza el método Include para realizar una carga anticipada de los datos
+                    (eager loading) se utiliza para cargar datos relacionados en este caso
+                    Users y Photos estan relacionados por lo tanto cuando se hace 
+                    SingleOrDefaultAsync(x => x.UserName == username); trae las fotos relacionadas
+                    con este usuario y no tocaría hacer una consulta adicional
+                */
                 .SingleOrDefaultAsync(x => x.UserName == username);
+                /*
+                    SingleOrDefaultAsync(x => x.UserName == username) se realiza un filtro por usuario
+                    y devuelve el valor único o null
+                */
         }
 
         public async Task<string> GetUserGender(string username)
         {
-            return await context.Users
+            return await context.Users // ingresa a los datos de la tabla Users
                 .Where(x => x.UserName == username) // filtra por UserName
                 .Select(x => x.Gender) // con select devuelve el valor del genero del usuario
                 .FirstOrDefaultAsync(); // devuelve el primer elemento que encuentra
