@@ -145,14 +145,17 @@ namespace API.Data
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
-            return await context.Users
-                .Include(p =>p.Photos)
-                .ToListAsync();
+            return await context.Users // traer todos los users
+                .Include(p =>p.Photos) // incluir la consulta de fotos de cada usuario
+                .ToListAsync(); // traer una lista
         }
 
         public void Update(AppUser user)
         {
-            context.Entry(user).State = EntityState.Modified;
+            context
+            .Entry(user). // se utiliza para obtener una entidad rastreada por el contexto
+            State = EntityState.Modified; // esto se refiere a que el estado de la entidad
+            // ha sido modificada y cuando se llame SaveChanges debe cambiar
         }
     }
 }

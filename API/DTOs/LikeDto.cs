@@ -2,12 +2,12 @@ namespace API.DTOs
 {
     public class LikeDto
     {
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public int Age { get; set; }
-        public string KnownAs { get; set; }
-        public string PhotoUrl { get; set; }
-        public string City { get; set; }
+        public int Id { get; set; } // id
+        public string UserName { get; set; } // usuario
+        public int Age { get; set; } // edad
+        public string KnownAs { get; set; } // apodo del usuario
+        public string PhotoUrl { get; set; } // url de la foto
+        public string City { get; set; } // ciudad del usuario
         
     }
 }

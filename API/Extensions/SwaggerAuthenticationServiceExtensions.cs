@@ -32,7 +32,7 @@ namespace API.Extensions
                             Id = "Bearer"
                         }
                     },
-                    new String[] {}
+                    new string[] {}
                 }
             });
         });
