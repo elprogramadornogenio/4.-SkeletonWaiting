@@ -6,8 +6,7 @@ import { Message } from '../_models/message';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { User } from '../_models/user';
 import { BehaviorSubject, take } from 'rxjs';
-import { group } from '@angular/animations';
-import { Connection, Group } from '../_models/group';
+import { Group } from '../_models/group';
 
 @Injectable({
   providedIn: 'root'
