@@ -101,21 +101,51 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) {
-    user.roles = [];
+    user.roles = []; // se declara un arreglo de roles en user
     const roles = this.getDecodedToken(user.token).role;
+    /*
+      obtiene los roles del token que han sido codificados en base 64 y los convierte
+      en un arreglo de string
+    */
     Array.isArray(roles) ? user.roles = roles: user.roles.push(roles);
+    /*
+      Array.isArray(roles) verifica si la constante roles es un arreglo
+    */
     localStorage.setItem('user', JSON.stringify(user));
+    /*
+      Se va a crear en el localstorage un objeto user mediante localStorage.setItem('user')
+      JSON.stringify(user) convierte el objeto Javascript en un JSON recuerde que localstorage
+      almacena el token en formato JSON
+    */
     this.currentUserSource.next(user);
+    /*
+      el observador BehaviorSubject
+      private currentUserSource = new BehaviorSubject<User | null>(null);
+      cambia el valor y a la vez notifica a los observadores de este observador a
+      currentUser$ = this.currentUserSource.asObservable(); que el usuario ha cambiado
+      y a su vez currentUser$ cambia de valor
+    */
     this.presenceService.createHubConnection(user);
   }
 
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem('user'); // elimina el item user del localstorage
     this.currentUserSource.next(null);
     this.presenceService.stopHubConnection();
   }
 
   getDecodedToken(token: string) {
     return JSON.parse(atob(token.split('.')[1]));
+    /*
+      token.split('.') con este paso se separa un token en tres partes
+      0 => header
+      1 => payload
+      2 => signature
+      token.split('.')[1] con el [1] se selecciona el payload del token
+      aunque está codificado en base 64
+      atob(token.split('.')[1]) mediante la función atob se decodifica el payload
+      JSON.parse(atob(token.split('.')[1])) mediante JSON.parse se transforma un
+      json en un objeto JavaScript
+    */
   }
 }
