@@ -27,27 +27,49 @@ export class MessageService {
 
   createHubConnection(user: User, otherUsername: string) {
     this.hubConnection = new HubConnectionBuilder()
+      /*
+        Se crea una instancia para configurar el signalR con una url y token de acceso
+      */
       .withUrl(this.hubUrl + 'message?user=' + otherUsername, {
         accessTokenFactory: () => user.token
       })
+      /*
+        Se envia como parámetro la variable del otherUsername
+      */
       .withAutomaticReconnect()
-      .build();
-    this.hubConnection.start().catch(error => console.log(error));
+      /*
+        Si se desconecta signalR se va a intentar conectar nuevamente
+      */
+      .build(); // finalizar a construir la configuración proporcionada.
+
+      this.hubConnection.start().catch(error => console.log(error));
+      /*
+        Se inicia la conexión con SignalR y cualquier error se captura en consola.
+      */
 
     this.hubConnection.on('ReceiveMessageThread', messages =>{
+      /*
+        this.hubConnection.on = Se establece una función que va a escuchar al servidor
+        cuando se ejecute el evento ReceiveMessageThread y obtiene el mensaje
+      */
       this.messageThreadSource.next(messages);
     });
 
     this.hubConnection.on('UpdatedGroup', (group: Group) => {
+      /*
+        this.hubConnection.on = Se establece una función que va a escuchar al servidor
+        cuando se ejecute el evento UpdatedGroup y obtiene el grupo
+      */
       if(group.connection.some(x => x.username === otherUsername)) {
+        // si existe un grupo de conexión donde un usuario = al otro usuario
         this.messageThread$.pipe(take(1)).subscribe({
           next: messages => {
             messages.forEach(message =>{
               if(!message.dateRead) {
-                message.dateRead = new Date(Date.now());
+                message.dateRead = new Date(Date.now()); // deja leido el mensaje
               }
             })
-            this.messageThreadSource.next([...messages]);
+            this.messageThreadSource.next([...messages]); // se actualiza el observador de mensajes
           }
         });
 
@@ -56,9 +78,14 @@ export class MessageService {
     });
 
     this.hubConnection.on('NewMessage', message =>{
+      /*
+        this.hubConnection.on = Se establece una función que va a escuchar al servidor
+        cuando se ejecute el evento NewMessage y obtiene el grupo
+      */
       this.messageThread$.pipe(take(1)).subscribe({
         next: messages => {
           this.messageThreadSource.next([...messages, message])
+          // agregar a messages el ultime message
         }
       });
     });
@@ -66,7 +93,7 @@ export class MessageService {
 
   stopHubConnection() {
     if (this.hubConnection) {
-      this.hubConnection.stop();
+      this.hubConnection.stop(); // se desconecta de SignalR
     }
   }
 
@@ -81,7 +108,12 @@ export class MessageService {
   }
 
   async sendMessage(username: string, content: string) {
-    return this.hubConnection?.invoke('SendMessage', {recipientUsername: username, content})
+    return this.hubConnection?.
+    invoke('SendMessage', {recipientUsername: username, content})
+    /*
+      invoke es una funcionalidad que sirve para invocar otro evento en el servidor con
+      nombre SendMessage y se le va a enviar recipientUsername y el contenido del mensaje
+    */
       .catch(error => console.log(error));
   }
 

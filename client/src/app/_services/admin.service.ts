@@ -14,10 +14,16 @@ export class AdminService {
 
   getUsersWithRoles() {
     return this.http.get<User[]>(this.baseUrl + 'admin/users-with-roles');
+    /*
+      traer todos los usuario con los permisos correspondientes
+    */
   }
 
   updateUserRoles(username: string, roles: string[]) {
     return this.http
       .post<string[]>(this.baseUrl + 'admin/edit-roles/'+ username + '?roles='+ roles,{});
+      /*
+        actualizar los roles de un usuario
+      */
   }
 }
