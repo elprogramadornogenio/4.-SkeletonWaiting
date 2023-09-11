@@ -68,10 +68,33 @@ import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.c
     ReactiveFormsModule,
     SharedModule
   ],
+  /*
+    Interceptores: Es una caracteristica de angular que permite interceptar y modificar
+    las solicitudes HTTP antes que se envien al servidor y las respuestas HTTP antes de que
+    lleguen a los componentes.
+    Analogía interceptores en angular servicio de Aduanas
+    Analogía interceptores en angular el envio de drogas y la DEA.
+
+    Interceptores: Es una caracteristica de angular que permite interceptar y modificar
+    las solicitudes HTTP antes que se envien al servidor y las respuestas HTTP antes de que
+    lleguen a los componentes, y la orden de ejecución es la siguiente:
+  */
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+    /*
+      ErrorInterceptor es el primer interceptor que se va a ejecutarse en una solicitud
+      HTTP y requerimiento HTTP
+    */
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    /*
+      JwtInterceptor es el segundo interceptor que se va a ejecutarse en una solicitud
+      HTTP y requerimiento HTTP
+    */
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
+    /*
+      LoadingInterceptor es el tercer interceptor que se va a ejecutarse en una solicitud
+      HTTP y requerimiento HTTP
+    */
   ],
   bootstrap: [AppComponent]
 })
