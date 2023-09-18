@@ -10,7 +10,7 @@ namespace API.Service
 {
     public class TokenService : ITokenService
     {
-        public readonly SymmetricSecurityKey _key;
+        private readonly SymmetricSecurityKey _key;
         private readonly UserManager<AppUser> userManager;
 
         public TokenService(
