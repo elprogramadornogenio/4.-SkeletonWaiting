@@ -7,7 +7,7 @@ namespace API.Extensions
             var today = DateOnly.FromDateTime(DateTime.UtcNow); // inicializa el dia de hoy
             var age = today.Year - date.Year; // resta el año actual con el año de nacimiento
 
-            if(date > today.AddDays(-age)) age--; // si la fecha de nacimiento es mayor
+            if(date > today.AddYears(-age)) age--; // si la fecha de nacimiento es mayor
             // a la fecha de hoy restando los años quiere decir que ya cumplio años de lo contrario
             // le resta un año porque no lo ha cumplido
 
